@@ -44,6 +44,7 @@ def main():
     y_batch = []
     pred_batch = []
     start = timeit.default_timer()
+    batch_index = 0
     for i, test_data in enumerate(test_datas):
         hsv_img = LeafDisease.loadImage(test_data[0])
         feature = LeafDisease.extractFeature(hsv_img, lower_blue, upper_blue)
@@ -54,11 +55,8 @@ def main():
             pred_batch = model.predict(x_batch)
             stop = timeit.default_timer()
 
-            if batch_size > 1:
-                print('{0:.3f}'.format((stop - start) * 1000), 'ms', 'Predictions :', [classes[index] for index in pred_batch], 'Conclusion :', ['Correct' if pred == test_datas[index][1] else 'Wrong' for index, pred in enumerate(pred_batch)])
-            else:
-                print('{0:.3f}'.format((stop - start) * 1000), 'ms', 'Predictions :', [classes[index] for index in pred_batch], 'Conclusion :', ['Correct' if pred == test_datas[i][1] else 'Wrong' for pred in pred_batch])
-
+            print('{0:.3f}'.format((stop - start) * 1000), 'ms', 'Predictions :', [classes[index] for index in pred_batch], 'Conclusion :', ['Correct' if pred == test_datas[(batch_index * batch_size) + index][1] else 'Wrong' for index, pred in enumerate(pred_batch)])
+            
             x_test += x_batch
             y_test += y_batch
             y_pred += [pred for pred in pred_batch]
@@ -66,6 +64,7 @@ def main():
             x_batch = []
             y_batch = []
             pred_batch = []
+            batch_index += 1
 
             start = timeit.default_timer()
 
