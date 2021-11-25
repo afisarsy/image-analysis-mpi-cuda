@@ -102,6 +102,7 @@ class LeafDisease:
         smoothness = 1 - (1 / (1 + img_hsv_masked.sum()))                           # Extract feature : smoothness
 
         if(debug):
+            print()
             print('%-25s' % 'Contrast',':', contrast[0][0])
             print('%-25s' % 'Energy',':', energy[0][0])
             print('%-25s' % 'Homogeneity', ':', homogeneity[0][0])
@@ -126,7 +127,7 @@ class LeafDisease:
     
     '''Load Dataset'''
     @staticmethod
-    def loadDataset(dataset_dir, mask_param, cuda=False):
+    def loadDataset(dataset_dir, mask_param, cuda=False, debug=False):
         classes = [class_name for class_name in os.listdir(dataset_dir) if os.path.isdir(os.path.join(dataset_dir, class_name).replace("\\","/"))]
         dataset = []
 
@@ -139,10 +140,10 @@ class LeafDisease:
 
                 if not cuda:
                     img_hsv = LeafDisease.loadImage(img_path)
-                    feature = LeafDisease.extractFeature(img_hsv, mask_param[0], mask_param[1])
+                    feature = LeafDisease.extractFeature(img_hsv, mask_param[0], mask_param[1], debug=debug)
                 else:
                     img_hsv, gpu_img_hsv = LeafDisease.cudaLoadImage(img_path)
-                    feature = LeafDisease.cudaExtractFeature(img_hsv, mask_param[0], mask_param[1], debug=True)
+                    feature = LeafDisease.cudaExtractFeature(img_hsv, mask_param[0], mask_param[1], debug=debug)
                 dataset.append([feature, i])
             print()
         

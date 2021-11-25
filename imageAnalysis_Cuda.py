@@ -3,6 +3,7 @@ import timeit
 import random
 from datetime import datetime
 import csv
+import pickle
 
 import cv2
 import numpy as np
@@ -14,25 +15,17 @@ from libs.plot import getconfusionmatrix, plotconfusionmatrix
 def main():
     '''Variables'''
     dt_string = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
-    
+
     '''Main Params'''
-    dataset_dir = 'dataset/train'
+    model = 'modelCuda.sav'
     datatest_dir = 'dataset/test'
     output_file = 'imageAnalysisCuda_' + dt_string + '.csv'
     batch_size = 1
     lower_blue = np.array([14,32.64,22.185])
     upper_blue = np.array([34,255,232.815])
+    classes = [class_name for class_name in os.listdir(datatest_dir) if os.path.isdir(os.path.join(datatest_dir, class_name).replace("\\","/"))]
 
-    (x_train, y_train), classes = LeafDisease.loadDataset(dataset_dir, [lower_blue, upper_blue])
-    #print(x_train)
-    #print(y_train)
-    #print(x_test)
-    #print(y_test)
-    #print(classes)
-
-    model = LogisticRegression()
-    model.fit(x_train, y_train)             # Train model
-    #print(model)
+    model = pickle.load(open(model, 'rb'))
 
     '''List Test Files'''
     test_datas = []
@@ -58,8 +51,8 @@ def main():
     start = timeit.default_timer()
     batch_index = 0
     for i, test_data in enumerate(test_datas):
-        hsv_img = LeafDisease.loadImage(test_data[0])
-        feature = LeafDisease.extractFeature(hsv_img, lower_blue, upper_blue)
+        hsv_img, gpu_img_hsv = LeafDisease.cudaLoadImage(test_data[0])
+        feature = LeafDisease.cudaExtractFeature(hsv_img, lower_blue, upper_blue)
         
         file_paths.append(test_data[0][(test_data[0].find('/')+1):])
         file_sizes.append(os.path.getsize(test_data[0]))
