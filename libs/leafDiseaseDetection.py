@@ -13,6 +13,8 @@ class LeafDisease:
     @staticmethod
     def loadImage(img_path):
         img = cv2.imread(img_path)
+        if img is None:
+            print('Error :', img_path)
         img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         return img_hsv
 
@@ -63,6 +65,8 @@ class LeafDisease:
     @staticmethod
     def cudaLoadImage(img_path):
         img = cv2.imread(img_path)
+        if img is None:
+            print('Error :', img_path)
         gpu_img = cv2.cuda_GpuMat()
         gpu_img.upload(img)
         gpu_img_hsv = cv2.cuda.cvtColor(gpu_img, cv2.COLOR_BGR2HSV)
@@ -127,6 +131,9 @@ class LeafDisease:
         for i, class_name in enumerate(classes):
             for img_name in os.listdir(os.path.join(dataset_dir, class_name).replace("\\","/")):
                 img_path = os.path.join(dataset_dir, class_name, img_name).replace("\\","/")
+
+                #print('Processing :', img_path, end='\r')
+
                 if not cuda:
                     img_hsv = LeafDisease.loadImage(img_path)
                     feature = LeafDisease.extractFeature(img_hsv, mask_param[0], mask_param[1])
@@ -134,6 +141,7 @@ class LeafDisease:
                     img_hsv, gpu_img_hsv = LeafDisease.cudaLoadImage(img_path)
                     feature = LeafDisease.cudaExtractFeature(img_hsv, mask_param[0], mask_param[1], debug=True)
                 dataset.append([feature, i])
+        print()
         
         random.shuffle(dataset)                             # Shuffle the data
         
