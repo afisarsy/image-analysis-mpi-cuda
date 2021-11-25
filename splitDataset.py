@@ -8,7 +8,7 @@ import json
 def main():
     '''Main Params'''
     output_dir = 'dataset'
-    dataset_dir = '../Corn Desease detection'
+    dataset_dir = '../Corn Disease detection'
     train_ratio = .6    #Train ratio = X, Test ratio = 1-X, X=(0-1)
 
     '''Prepare Variables'''
