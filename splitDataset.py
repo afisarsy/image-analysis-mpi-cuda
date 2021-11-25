@@ -67,6 +67,7 @@ def main():
         shutil.copy(os.path.join(dataset_dir, file).replace("\\","/"), os.path.join(output_dir, 'test', file).replace("\\","/"))
 
     '''Report'''
+    print()
     print('Successfully splitted into :')
     print('\t', n_train, 'train data')
     print('\t', n_test, 'test data')
