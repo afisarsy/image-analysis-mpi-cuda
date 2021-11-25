@@ -35,7 +35,7 @@ def main():
             img_path = os.path.join(datatest_dir, class_name, img_name).replace("\\","/")
             test_datas.append([img_path, i])
     
-    random.shuffle(test_datas)
+    #random.shuffle(test_datas)
 
     x_test = []
     y_test = []
