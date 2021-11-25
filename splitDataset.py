@@ -28,11 +28,6 @@ def main():
         for class_name in classes:
             os.makedirs(test_dir +'/' + class_name)
 
-    '''Load prev config'''
-    prev_props = {}
-    with open(os.path.join(dataset_dir, 'properties.txt')) as f:
-        prev_props = json.load(f)
-
     '''Write properties File'''
     with open(os.path.join(output_dir, 'properties.txt'), 'w') as f:
         props = {
