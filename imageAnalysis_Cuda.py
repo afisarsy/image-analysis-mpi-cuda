@@ -27,7 +27,7 @@ def main():
 
     model = pickle.load(open(model, 'rb'))
 
-    '''Load Cuda''' #To solve the time spike in the first data
+    '''Load Cuda'''     #To solve the time spike in the first data
     temp = np.zeros((100,100), dtype=np.float)
     temp_gpu = cv2.cuda_GpuMat()
     temp_gpu.upload(temp)
