@@ -1,6 +1,8 @@
 import os
 import timeit
 import random
+from datetime import datetime
+import csv
 
 import cv2
 import numpy as np
@@ -10,9 +12,13 @@ from libs.leafDiseaseDetection import LeafDisease
 from libs.plot import getconfusionmatrix, plotconfusionmatrix
 
 def main():
+    '''Variables'''
+    dt_string = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+    
     '''Main Params'''
     dataset_dir = 'dataset/train'
     datatest_dir = 'dataset/test'
+    output_file = 'imageAnalysisCuda_' + dt_string + '.csv'
     batch_size = 1
     lower_blue = np.array([14,32.64,22.185])
     upper_blue = np.array([34,255,232.815])
@@ -37,25 +43,39 @@ def main():
     
     #random.shuffle(test_datas)
 
+    results = []
+
     x_test = []
     y_test = []
     y_pred = []
     x_batch = []
     y_batch = []
     pred_batch = []
+
+    file_paths = []
+    file_sizes = []
+
     start = timeit.default_timer()
     batch_index = 0
     for i, test_data in enumerate(test_datas):
         hsv_img = LeafDisease.loadImage(test_data[0])
         feature = LeafDisease.extractFeature(hsv_img, lower_blue, upper_blue)
-            
+        
+        file_paths.append(test_data[0][(test_data[0].find('/')+1):])
+        file_sizes.append(os.path.getsize(test_data[0]))
         x_batch.append(feature)
         y_batch.append(test_data[1])
         if((i + 1) % batch_size == 0 or i == len(test_datas)-1):
             pred_batch = model.predict(x_batch)
-            stop = timeit.default_timer()
+            
+            total_file_size = sum(file_sizes)
+            predictions = [classes[index] for index in pred_batch]
+            conclusions = [1 if pred == test_datas[(batch_index * batch_size) + index][1] else 0 for index, pred in enumerate(pred_batch)]
 
-            print('{0:.3f}'.format((stop - start) * 1000), 'ms\t', 'Predictions :', [classes[index] for index in pred_batch], '\tConclusion :', ['Correct' if pred == test_datas[(batch_index * batch_size) + index][1] else 'Wrong' for index, pred in enumerate(pred_batch)])
+            exec_time = (timeit.default_timer() - start) * 1000
+            result = [file_paths, file_sizes, total_file_size, exec_time, predictions, conclusions]
+            results.append(result)
+            print('%12i' % total_file_size, 'Bytes', '%15s' % '{0:.3f}'.format(exec_time), 'ms', file_paths)
             
             x_test += x_batch
             y_test += y_batch
@@ -64,9 +84,21 @@ def main():
             x_batch = []
             y_batch = []
             pred_batch = []
+            file_paths = []
+            file_sizes = []
             batch_index += 1
 
             start = timeit.default_timer()
+    
+    '''Write to CSV'''
+    with open(output_file, 'w', newline='') as csv_file:
+        file_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        '''Write Header'''
+        header = ['file(s)', 'file(s) size', 'total file size(Bytes)', 'time(ms)', 'prediction(s)', 'conclusion(s)']
+        file_writer.writerow(header)
+
+        '''Write Data'''
+        file_writer.writerows(results)
 
     #cm = getconfusionmatrix(y_pred=y_pred, y_true=y_test)
     #plot = plotconfusionmatrix(cm, classes)
