@@ -136,7 +136,7 @@ class LeafDisease:
             for j, img_name in enumerate(images):
                 img_path = os.path.join(dataset_dir, class_name, img_name).replace("\\","/")
 
-                print('Processing :', img_path, '%-15s' % '({0}/{1})'.format(j+1, len(images)), end='\r')
+                print('Processing  : ', img_path, '%-15s' % '({0}/{1})'.format(j+1, len(images)), end='\r')
 
                 if not cuda:
                     img_hsv = LeafDisease.loadImage(img_path)

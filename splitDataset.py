@@ -41,8 +41,9 @@ def main():
     '''Read all dataset'''
     file_paths = []
     for root, dir, files in os.walk(dataset_dir):
-        for file in files:
-            file_paths.append(os.path.join(root, file).replace("\\","/")[len(dataset_dir) + 1:])
+        for filename in files:
+            if filename.find('.jpg') > -1 or filename.find('.jpeg') > -1:
+                file_paths.append(os.path.join(root, filename).replace("\\","/")[len(dataset_dir) + 1:])
     file_paths = set(file_paths)    #Convert to set
     print('Total data :', len(file_paths))
     
