@@ -144,7 +144,7 @@ class LeafDisease:
                     img_hsv, gpu_img_hsv = LeafDisease.cudaLoadImage(img_path)
                     feature = LeafDisease.cudaExtractFeature(img_hsv, mask_param[0], mask_param[1], debug=True)
                 dataset.append([feature, i])
-        print()
+            print()
         
         random.shuffle(dataset)                             # Shuffle the data
         
