@@ -52,7 +52,7 @@ def main():
     train_files = random.sample(file_paths, n_train)
 
     test_files = file_paths.difference(train_files)
-    n_val = len(val_files)
+    n_test = len(test_files)
 
     print()
     print('Train files')
