@@ -36,8 +36,7 @@ def main():
                 'train ratio' : train_ratio
             }
         }
-        prev_props.update(props)
-        f.write(json.dumps(prev_props))
+        f.write(json.dumps(props))
     
     '''Read all dataset'''
     file_paths = []
