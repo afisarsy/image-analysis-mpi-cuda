@@ -45,6 +45,8 @@ def main():
                 img_data.append([img_path, i])
         total_img = len(img_data)
     else:
+        lower_blue = None
+        upper_blue = None
         total_img = None
     
     comm.Bcast(lower_blue, root=0)
