@@ -49,9 +49,9 @@ def main():
         upper_blue = None
         total_img = None
     
-    comm.Bcast(lower_blue, root=0)
-    comm.Bcast(upper_blue, root=0)
-    comm.Bcast(total_img, root=0)
+    comm.bcast(lower_blue, root=0)
+    comm.bcast(upper_blue, root=0)
+    comm.bcast(total_img, root=0)
     comm.Barrier()
     
     for i in range(total_img):
@@ -66,7 +66,7 @@ def main():
         else:
             img_hsv_crop = None
         
-        comm.Scatter(imgs_hsv_crop, img_hsv_crop, root=0)
+        comm.scatter(imgs_hsv_crop, img_hsv_crop, root=0)
 
         features = LeafDisease.extractFeature(img_hsv_crop, lower_blue, upper_blue)
         if rank == 0:
