@@ -71,7 +71,7 @@ def main():
         else:
             img_hsv_crop = None
         
-        comm.scatter(imgs_hsv_crop, img_hsv_crop, root=0)
+        img_hsv_crop = comm.scatter(imgs_hsv_crop, root=0)
 
         features = LeafDisease.extractFeature(img_hsv_crop, lower_blue, upper_blue)
         if rank == 0:
