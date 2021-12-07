@@ -21,11 +21,11 @@ class LeafDisease:
     @staticmethod
     def preprocessing(img, lower_mask, upper_mask):
         img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)        
-        mask = cv2.inRange(img_hsv, lower_mask, upper_mask)                         # Create mask
-        img_hsv_masked = cv2.bitwise_and(img_hsv, img_hsv, mask=mask)               # Applying bitwise operator between mask and originl image        
+        mask = cv2.inRange(img_hsv, lower_mask, upper_mask)                             # Create mask
+        img_hsv_masked = cv2.bitwise_and(img_hsv, img_hsv, mask=mask)                   # Applying bitwise operator between mask and originl image        
         
         img_grey_masked = cv2.cvtColor(img_hsv_masked, cv2.COLOR_BGR2GRAY)
-        glcm = greycomatrix(img_grey_masked, [1], [0])                          # Get Grey Level Correlation Matrix
+        glcm = greycomatrix(img_grey_masked, [1], [0])                                  # Get Grey Level Correlation Matrix
 
         return img_hsv_masked, glcm
     
@@ -36,14 +36,14 @@ class LeafDisease:
         gpu_img.upload(img)
         gpu_img_hsv = cv2.cuda.cvtColor(gpu_img, cv2.COLOR_BGR2HSV)
         img_hsv = gpu_img_hsv.download()        
-        mask = cv2.inRange(img_hsv, lower_mask, upper_mask)                         # Create mask
-        img_hsv_masked = cv2.bitwise_and(img_hsv, img_hsv, mask=mask)               # Applying bitwise operator between mask and originl image        
+        mask = cv2.inRange(img_hsv, lower_mask, upper_mask)                             # Create mask
+        img_hsv_masked = cv2.bitwise_and(img_hsv, img_hsv, mask=mask)                   # Applying bitwise operator between mask and originl image        
 
         gpu_img_hsv_masked = cv2.cuda_GpuMat()
         gpu_img_hsv_masked.upload(img_hsv_masked)        
         gpu_img_grey_masked = cv2.cuda.cvtColor(gpu_img_hsv_masked, cv2.COLOR_BGR2GRAY)
         img_grey_masked = gpu_img_grey_masked.download()
-        glcm = greycomatrix(img_grey_masked, [1], [0])                          # Get Grey Level Correlation Matrix
+        glcm = greycomatrix(img_grey_masked, [1], [0])                                  # Get Grey Level Correlation Matrix
 
         return img_hsv_masked, glcm
 

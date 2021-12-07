@@ -50,10 +50,14 @@ def main():
         total_img = None
     
     comm.Barrier()
-    comm.bcast(lower_blue, root=0)
-    comm.bcast(upper_blue, root=0)
-    comm.bcast(total_img, root=0)
+    lower_blue = comm.bcast(lower_blue, root=0)
+    upper_blue = comm.bcast(upper_blue, root=0)
+    total_img = comm.bcast(total_img, root=0)
     comm.Barrier()
+
+    print('[',rank, ']','lower blue :', lower_blue)
+    print('[',rank, ']','upper blue :', upper_blue)
+    print('[',rank, ']','total img :', total_img)
     
     for i in range(total_img):
         if rank == 0:
