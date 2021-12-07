@@ -24,13 +24,17 @@ def main():
     lower_blue = np.array([14,32.64,22.185])
     upper_blue = np.array([34,255,232.815])
     classes = [class_name for class_name in os.listdir(datatest_dir) if os.path.isdir(os.path.join(datatest_dir, class_name).replace("\\","/"))]
+    debug_index = []
 
     model = pickle.load(open(model, 'rb'))
 
     '''List Test Files'''
     test_datas = []
+    img_files = []
     for i, class_name in enumerate(classes):
-        for img_name in os.listdir(os.path.join(datatest_dir, class_name).replace("\\","/")):
+        debug_index.append(len(img_files))                                                      #Select 1 img each class to print it's feature
+        img_files = os.listdir(os.path.join(datatest_dir, class_name).replace("\\","/"))
+        for img_name in img_files:
             img_path = os.path.join(datatest_dir, class_name, img_name).replace("\\","/")
             test_datas.append([img_path, i])
     
@@ -51,9 +55,14 @@ def main():
     start = timeit.default_timer()
     batch_index = 0
     for i, test_data in enumerate(test_datas):
+        debug = (i == debug_index[0] or i == debug_index[1])
+        if debug:
+            print()
+            print('File :', test_data[0])
+        img = LeafDisease.loadImage(test_data[0])
         img = LeafDisease.loadImage(test_data[0])
         img_hsv_masked, glcm = LeafDisease.preprocessing(img, lower_blue, upper_blue)
-        feature = LeafDisease.extractFeature(img_hsv_masked, glcm)
+        feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
         
         file_paths.append(test_data[0][(test_data[0].find('/')+1):])
         file_sizes.append(os.path.getsize(test_data[0]))

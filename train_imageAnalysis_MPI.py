@@ -49,6 +49,7 @@ def main():
         upper_blue = None
         total_img = None
     
+    comm.Barrier()
     comm.bcast(lower_blue, root=0)
     comm.bcast(upper_blue, root=0)
     comm.bcast(total_img, root=0)
@@ -56,12 +57,12 @@ def main():
     
     for i in range(total_img):
         if rank == 0:
-            img_hsv = LeafDisease.loadImage(img_data[i][0])
-            w, h = img_hsv.shape
+            img = LeafDisease.loadImage(img_data[i][0])
+            w, h = img.shape
             cropBoxes = imgProcessing.getCropBox(w, h, size)
-            imgs_hsv_crop = []
+            imgs_crop = []
             for cropBox in cropBoxes:
-                imgs_hsv_crop.append(img_hsv[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]])
+                imgs_crop.append(img[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]])
             img_hsv_crop = None
         else:
             img_hsv_crop = None
