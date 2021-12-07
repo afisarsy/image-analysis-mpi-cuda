@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 
 from libs.leafDiseaseDetection import LeafDisease
-from libs.plot import getconfusionmatrix, plotconfusionmatrix
+from libs.plot import getConfusionMatrix, plotSaveConfusionMatrix
 
 def main():
     '''Variables'''
@@ -19,6 +19,7 @@ def main():
     model = 'model.sav'
     datatest_dir = 'dataset/test'
     output_file = 'imageAnalysis_' + dt_string + '.csv'
+    confusion_matrix_file = 'cm_' + dt_string + '.png'
     batch_size = 1
     lower_blue = np.array([14,32.64,22.185])
     upper_blue = np.array([34,255,232.815])
@@ -50,8 +51,9 @@ def main():
     start = timeit.default_timer()
     batch_index = 0
     for i, test_data in enumerate(test_datas):
-        hsv_img = LeafDisease.loadImage(test_data[0])
-        feature = LeafDisease.extractFeature(hsv_img, lower_blue, upper_blue)
+        img = LeafDisease.loadImage(test_data[0])
+        img_hsv_masked, glcm = LeafDisease.preprocessing(img, lower_blue, upper_blue)
+        feature = LeafDisease.extractFeature(img_hsv_masked, glcm)
         
         file_paths.append(test_data[0][(test_data[0].find('/')+1):])
         file_sizes.append(os.path.getsize(test_data[0]))
@@ -92,8 +94,8 @@ def main():
         '''Write Data'''
         file_writer.writerows(results)
 
-    #cm = getconfusionmatrix(y_pred=y_pred, y_true=y_test)
-    #plot = plotconfusionmatrix(cm, classes)
+    cm = getConfusionMatrix(y_pred=y_pred, y_true=y_test)
+    plot = plotSaveConfusionMatrix(cm, classes, confusion_matrix_file)
     
 if __name__ == '__main__':
     main()

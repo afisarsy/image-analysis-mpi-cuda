@@ -1,4 +1,5 @@
 dataset
 *.csv
 *.sav
+*.png
 */__pycache__

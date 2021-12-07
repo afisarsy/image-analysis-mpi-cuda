@@ -5,12 +5,12 @@ from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 
 '''Calculate The Confusion Matrix'''
-def getconfusionmatrix(y_pred, y_true):
+def getConfusionMatrix(y_pred, y_true):
     cm = confusion_matrix(y_pred=y_pred, y_true=y_true)
     return cm
 
-'''Plot Confusion Matrix'''
-def plotconfusionmatrix(cm, classes, normalize=False, title='Confusion Matrix', color_map=plt.cm.Blues):
+'''Plot & Save Confusion Matrix'''
+def plotSaveConfusionMatrix(cm, classes, output, normalize=False, title='Confusion Matrix', color_map=plt.cm.Blues):
     plt.imshow(cm, interpolation='nearest', cmap=color_map)
     plt.title(title)
     plt.colorbar()
@@ -34,4 +34,4 @@ def plotconfusionmatrix(cm, classes, normalize=False, title='Confusion Matrix', 
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    plt.show()
+    plt.savefig(output, bbox_inches='tight')
