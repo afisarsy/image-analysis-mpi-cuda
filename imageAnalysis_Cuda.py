@@ -21,6 +21,7 @@ def main():
     datatest_dir = 'dataset/test'
     output_file = 'imageAnalysisCuda_' + dt_string + '.csv'
     confusion_matrix_file = 'cmCuda_' + dt_string + '.png'
+    sample_feature_file = 'sampleFeatureCuda.txt'
     batch_size = 1
     lower_blue = np.array([14,32.64,22.185])
     upper_blue = np.array([34,255,232.815])
@@ -60,6 +61,7 @@ def main():
 
     start = timeit.default_timer()
     batch_index = 0
+    feature_file = open(sample_feature_file, 'w')
     for i, test_data in enumerate(test_datas):
         debug = (i == debug_index[0] or i == debug_index[1])
         if debug:
@@ -68,6 +70,19 @@ def main():
         img = LeafDisease.loadImage(test_data[0])
         img_hsv_masked, glcm = LeafDisease.cudaPreprocessing(img, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
+
+        if debug:
+            feature_file.writelines('File\t\t\t\t: ' + test_data[0] + '\n')
+            feature_file.writelines('Contrast\t\t\t: ' + str(feature[0]) + '\n')
+            feature_file.writelines('Energy\t\t\t\t: ' + str(feature[1]) + '\n')
+            feature_file.writelines('Homogeneity\t\t\t: ' + str(feature[2]) + '\n')
+            feature_file.writelines('Mean\t\t\t\t: ' + str(feature[3]) + '\n')
+            feature_file.writelines('Standard Deviation\t: ' + str(feature[4]) + '\n')
+            feature_file.writelines('Variance\t\t\t: ' + str(feature[5]) + '\n')
+            feature_file.writelines('Entropy\t\t\t\t: ' + str(feature[6]) + '\n')
+            feature_file.writelines('Root Mean Square\t: ' + str(feature[7]) + '\n')
+            feature_file.writelines('Smoothness\t\t\t: ' + str(feature[8]) + '\n')
+            feature_file.writelines('\n')
         
         file_paths.append(test_data[0][(test_data[0].find('/')+1):])
         file_sizes.append(os.path.getsize(test_data[0]))
@@ -97,6 +112,8 @@ def main():
             batch_index += 1
 
             start = timeit.default_timer()
+    
+    feature_file.close()
     
     '''Write to CSV'''
     with open(output_file, 'w', newline='') as csv_file:

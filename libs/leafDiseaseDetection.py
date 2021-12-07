@@ -73,7 +73,6 @@ class LeafDisease:
             print('%-25s' % 'Variance', ':', var)
             print('%-25s' % 'Entropy', ':', e)
             print('%-25s' % 'Root Mean Square', ':', rms)
-            print('%-25s' % 'Image Sum', ':', img_hsv_masked.sum())
             print('%-25s' % 'Smoothness', ':', smoothness)
 
         return [contrast[0][0], energy[0][0], homogeneity[0][0], mean, std, var, e, rms, smoothness]
