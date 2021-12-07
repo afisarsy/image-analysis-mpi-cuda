@@ -39,8 +39,8 @@ def main():
         img_data = []
         
         for i, class_name in enumerate(classes):
-            images = os.listdir(os.path.join(dataset_dir, class_name).replace("\\","/"))
-            for img_name in images:
+            img_files = os.listdir(os.path.join(dataset_dir, class_name).replace("\\","/"))
+            for img_name in img_files:
                 img_path = os.path.join(dataset_dir, class_name, img_name).replace("\\","/")
                 img_data.append([img_path, i])
         total_img = len(img_data)
