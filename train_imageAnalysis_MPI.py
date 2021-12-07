@@ -67,13 +67,13 @@ def main():
             imgs_crop = []
             for cropBox in cropBoxes:
                 imgs_crop.append(img[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]])
-            img_hsv_crop = None
         else:
-            img_hsv_crop = None
+            imgs_crop = None
         
-        img_hsv_crop = comm.scatter(imgs_hsv_crop, root=0)
+        img_crop = comm.scatter(imgs_crop, root=0)
+        img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
+        feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
 
-        features = LeafDisease.extractFeature(img_hsv_crop, lower_blue, upper_blue)
         if rank == 0:
             print('(Master)', 'File :', img_data[i][0], 'Feature :', features)
         else:

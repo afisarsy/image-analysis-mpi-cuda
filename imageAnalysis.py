@@ -62,7 +62,6 @@ def main():
             print()
             print('File :', test_data[0])
         img = LeafDisease.loadImage(test_data[0])
-        img = LeafDisease.loadImage(test_data[0])
         img_hsv_masked, glcm = LeafDisease.preprocessing(img, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
 
