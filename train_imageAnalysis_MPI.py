@@ -49,15 +49,15 @@ def main():
         upper_blue = None
         total_img = None
     
-    comm.Barrier()
+    #comm.Barrier()
     lower_blue = comm.bcast(lower_blue, root=0)
     upper_blue = comm.bcast(upper_blue, root=0)
     total_img = comm.bcast(total_img, root=0)
-    comm.Barrier()
+    #comm.Barrier()
 
-    print('[',rank, ']','lower blue :', lower_blue)
-    print('[',rank, ']','upper blue :', upper_blue)
-    print('[',rank, ']','total img :', total_img)
+    print('[', rank, ']', 'lower blue :', lower_blue)
+    print('[', rank, ']', 'upper blue :', upper_blue)
+    print('[', rank, ']', 'total img :', total_img)
     
     for i in range(total_img):
         if rank == 0:
@@ -70,14 +70,14 @@ def main():
         else:
             imgs_crop = None
         
-        img_crop = comm.scatter(imgs_crop, root=0)
+        img_crop = np.array([])
+        comm.Scatter(imgs_crop, img_crop, root=0)
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
 
-        if rank == 0:
-            print('(Master)', 'File :', img_data[i][0], 'Feature :', features)
-        else:
-            print('(Slave-{})'.format(rank), 'File :', img_data[i][0], 'Feature :', features)
+        print('[', rank, ']', 'File :', img_data[i][0])
+        print('[', rank, ']', 'Feature :', features)
+
         sys.exit(0)
 
 if __name__ == '__main__':
