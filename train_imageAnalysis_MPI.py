@@ -70,12 +70,12 @@ def main():
         else:
             imgs_crop = None
         
-        img_crop = np.array([])
+        img_crop = None
         comm.Scatter(imgs_crop, img_crop, root=0)
+        print('[', rank, ']', 'image :', img_crop)
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
 
-        print('[', rank, ']', 'File :', img_data[i][0])
         print('[', rank, ']', 'Feature :', features)
 
         sys.exit(0)
