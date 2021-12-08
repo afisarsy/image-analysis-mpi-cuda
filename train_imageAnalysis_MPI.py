@@ -72,7 +72,7 @@ def main():
             imgs_crop = None
         
         img_crop = None
-        comm.Scatterv(imgs_crop, img_crop, root=0)
+        comm.Scatter(imgs_crop, img_crop, root=0)
         print('[', rank, ']', 'image :', img_crop)
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
