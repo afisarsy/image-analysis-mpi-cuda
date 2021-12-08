@@ -62,16 +62,21 @@ def main():
     for i in range(total_img):
         if rank == 0:
             img = LeafDisease.loadImage(img_data[i][0])
-            print('[', rank, ']', 'shape :', img.shape)
             w, h, c = img.shape
             cropBoxes = imgProcessing.getCropBox(w, h, size)
             imgs_crop = []
             for cropBox in cropBoxes:
                 imgs_crop.append(img[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]])
         else:
+            w = None
+            h = None
             imgs_crop = None
         
-        img_crop = np.array([])
+        w = comm.bcast(w, root=0)
+        h = comm.bcast(h, root=0)
+        print('[', rank, ']', 'w :', w)
+        print('[', rank, ']', 'h :', h)
+        img_crop = np.empty((w,h))
         comm.Scatter(imgs_crop, img_crop, root=0)
         print('[', rank, ']', 'image :', img_crop)
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
