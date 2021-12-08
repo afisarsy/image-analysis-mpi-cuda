@@ -67,6 +67,7 @@ def main():
             imgs_crop = []
             for cropBox in cropBoxes:
                 imgs_crop.append(img[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]])
+            imgs_crop = np.array(imgs_crop)
         else:
             imgs_crop = None
         
