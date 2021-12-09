@@ -25,7 +25,7 @@ def main():
 
         '''Main Params'''
         dataset_dir = 'dataset/train'
-        output_file = 'modelMPI' + '.sav'
+        output_file = 'modelMPIScatter' + '.sav'
         batch_size = 1
         lower_blue = np.array([14,32.64,22.185])
         upper_blue = np.array([34,255,232.815])
