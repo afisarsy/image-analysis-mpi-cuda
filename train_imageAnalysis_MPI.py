@@ -73,7 +73,7 @@ def main():
             imgs_crop = None
         
         json_img = comm.scatter(imgs_crop, root=0)
-        img_crop = np.array(json.loads(json_img))
+        img_crop = np.array(json.loads(json_img), dtype='uint8')
         print('[', rank, ']', 'image :', img_crop)
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
