@@ -35,12 +35,18 @@ class LeafDisease:
         gpu_img = cv2.cuda_GpuMat()
         gpu_img.upload(img)
         gpu_img_hsv = cv2.cuda.cvtColor(gpu_img, cv2.COLOR_BGR2HSV)
+
+        #try:
+        #    gpu_mask = cv2.cuda.inRange(gpu_img_hsv, lower_mask, upper_mask)                            # Create mask
+        #    gpu_img_hsv_masked = cv2.cuda.bitwise_and(gpu_img_hsv, gpu_img_hsv, mask=gpu_mask)          # Applying bitwise operator between mask and originl image
+        #except:
+        #    print('error bitwise and using CUDA due to openCV issue : https://github.com/opencv/opencv/issues/20698')
         img_hsv = gpu_img_hsv.download()        
         mask = cv2.inRange(img_hsv, lower_mask, upper_mask)                             # Create mask
-        img_hsv_masked = cv2.bitwise_and(img_hsv, img_hsv, mask=mask)                   # Applying bitwise operator between mask and originl image        
-
+        img_hsv_masked = cv2.bitwise_and(img_hsv, img_hsv, mask=mask)                   # Applying bitwise operator between mask and originl image
         gpu_img_hsv_masked = cv2.cuda_GpuMat()
-        gpu_img_hsv_masked.upload(img_hsv_masked)        
+        gpu_img_hsv_masked.upload(img_hsv_masked)
+
         gpu_img_grey_masked = cv2.cuda.cvtColor(gpu_img_hsv_masked, cv2.COLOR_BGR2GRAY)
         img_grey_masked = gpu_img_grey_masked.download()
         glcm = greycomatrix(img_grey_masked, [1], [0])                                  # Get Grey Level Correlation Matrix

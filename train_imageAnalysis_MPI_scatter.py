@@ -52,6 +52,7 @@ def main():
     
     for i in range(total_img):
         if rank == 0:
+            print()
             print('[', rank, ']', '({}/{})'.format(i+1, total_img), 'File :', img_data[i][0])
             img = LeafDisease.loadImage(img_data[i][0])
             w, h, c = img.shape

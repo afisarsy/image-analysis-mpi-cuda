@@ -2,7 +2,7 @@ import math
 
 class imgProcessing:
     @staticmethod
-    def getCropBox(width, height, nsplit):
+    def getCropBox(width, height, nsplit, index=None):
         if math.sqrt(nsplit) % 1 == 0:
             ncols = int(math.sqrt(nsplit))
             nrows = ncols
@@ -16,17 +16,37 @@ class imgProcessing:
         crop_width = int(width / ncols)
         crop_height = int(height / nrows)
         
-        boxes = []
-        for i in range(nrows):
-            for j in range(ncols):
-                if i == nrows-1 and j == ncols-1:
-                    box = [j*crop_width, i*crop_height, width, height]
-                elif j == ncols-1:
-                    box = [j*crop_width, i*crop_height, width, (i+1)*crop_height]
-                elif i == nrows-1:
-                    box = [j*crop_width, i*crop_height, (j+1)*crop_width, height]
-                else:
-                    box = [j*crop_width, i*crop_height, (j+1)*crop_width, (i+1)*crop_height]
-                boxes.append(box)
-                
-        return boxes
+        if index == None:
+            boxes = []
+            for i in range(nrows):
+                for j in range(ncols):
+                    if i == nrows-1 and j == ncols-1:
+                        box = [j*crop_width, i*crop_height, width, height]
+                    elif j == ncols-1:
+                        box = [j*crop_width, i*crop_height, width, (i+1)*crop_height]
+                    elif i == nrows-1:
+                        box = [j*crop_width, i*crop_height, (j+1)*crop_width, height]
+                    else:
+                        box = [j*crop_width, i*crop_height, (j+1)*crop_width, (i+1)*crop_height]
+                    boxes.append(box)
+                    
+            return boxes
+        
+        elif index > nsplit-1:
+            print('Selected index larger than nsplit')
+            
+            return []
+        else:
+            i = int(index / ncols)
+            j = int(index % ncols)
+
+            if i == nrows-1 and j == ncols-1:
+                box = [j*crop_width, i*crop_height, width, height]
+            elif j == ncols-1:
+                box = [j*crop_width, i*crop_height, width, (i+1)*crop_height]
+            elif i == nrows-1:
+                box = [j*crop_width, i*crop_height, (j+1)*crop_width, height]
+            else:
+                box = [j*crop_width, i*crop_height, (j+1)*crop_width, (i+1)*crop_height]
+            
+            return box
