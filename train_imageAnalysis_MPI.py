@@ -4,7 +4,6 @@ import random
 from datetime import datetime
 import csv
 import pickle
-import sys
 import json
 
 from mpi4py import MPI
@@ -50,18 +49,14 @@ def main():
         upper_blue = None
         total_img = None
     
-    #comm.Barrier()
     lower_blue = comm.bcast(lower_blue, root=0)
     upper_blue = comm.bcast(upper_blue, root=0)
     total_img = comm.bcast(total_img, root=0)
-    #comm.Barrier()
-
-    print('[', rank, ']', 'lower blue :', lower_blue)
-    print('[', rank, ']', 'upper blue :', upper_blue)
-    print('[', rank, ']', 'total img :', total_img)
     
+    x_train = []
     for i in range(total_img):
         if rank == 0:
+            print('[', rank, ']', '({}/{})'.format(i+1, total_img), 'File :', img_data[i][0])
             img = LeafDisease.loadImage(img_data[i][0])
             w, h, c = img.shape
             cropBoxes = imgProcessing.getCropBox(w, h, size)
@@ -76,31 +71,34 @@ def main():
         img_crop = np.array(json.loads(json_img), dtype='uint8')
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm)
-        print('[', rank, ']', 'Feature :', feature)
-        np_feature = np.array(feature, dtype='float')
+        scatter_feature = np.array(feature, dtype='float')
 
-        features = None
+        gathered_features = None
         if rank == 0:
-            features = np.empty([size, 9], dtype='float')
-        comm.Gather(np_feature, features, root=0)
+            gathered_features = np.empty([size, 9], dtype='float')
+        comm.Gather(scatter_feature, gathered_features, root=0)
 
         if rank == 0:
-            print('[', rank, ']', 'Feature :', features)
-            contrast = max([feature[0] for feature in features])
-            energy = min([feature[1] for feature in features])
-            homogeneity = min([feature[2] for feature in features])
-            mean = max([feature[3] for feature in features])
-            std = max([feature[4] for feature in features])
-            var = max([feature[5] for feature in features])
-            entropy = max([feature[6] for feature in features])
-            rms = max([feature[7] for feature in features])
-            smoothness = max([feature[8] for feature in features])
+            print('[', rank, ']', 'Gathered features :', gathered_features)
+            contrast = max([feature[0] for feature in gathered_features])
+            energy = min([feature[1] for feature in gathered_features])
+            homogeneity = min([feature[2] for feature in gathered_features])
+            mean = max([feature[3] for feature in gathered_features])
+            std = max([feature[4] for feature in gathered_features])
+            var = max([feature[5] for feature in gathered_features])
+            entropy = max([feature[6] for feature in gathered_features])
+            rms = max([feature[7] for feature in gathered_features])
+            smoothness = max([feature[8] for feature in gathered_features])
             combined_feature = [contrast, energy, homogeneity, mean, std, var, entropy, rms, smoothness]
             print('[', rank, ']', 'Combined feature :', combined_feature)
 
-        comm.Barrier()
+            x_train.append(combined_feature)
+            y_train.append(img_data[i][1])
 
-        sys.exit(0)
+    if rank == 0:
+        model = LogisticRegression()
+        model.fit(x_train, y_train)             # Train model
+        pickle.dump(model, open(output_file, 'wb'))
 
 if __name__ == '__main__':
     main()
