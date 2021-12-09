@@ -54,6 +54,7 @@ def main():
     total_img = comm.bcast(total_img, root=0)
     
     x_train = []
+    y_train = []
     for i in range(total_img):
         if rank == 0:
             print('[', rank, ']', '({}/{})'.format(i+1, total_img), 'File :', img_data[i][0])
