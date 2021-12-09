@@ -5,6 +5,7 @@ from datetime import datetime
 import csv
 import pickle
 import sys
+import json
 
 from mpi4py import MPI
 import cv2
@@ -66,13 +67,12 @@ def main():
             cropBoxes = imgProcessing.getCropBox(w, h, size)
             imgs_crop = []
             for cropBox in cropBoxes:
-                imgs_crop.append(img[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]])
-            imgs_crop = np.array(imgs_crop)
+                imgs_crop.append(json.dumps(img[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]]))
         else:
             imgs_crop = None
         
-        img_crop = None
-        comm.Scatter(imgs_crop, img_crop, root=0)
+        json_img = comm.scatter(imgs_crop, root=0)
+        img_crop = json.loads(json_img)
         print('[', rank, ']', 'image :', img_crop)
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
