@@ -81,7 +81,7 @@ def main():
         features = None
         if rank == 0:
             features = np.empty([size, 9])
-        comm.gather(feature, features, root=0)
+        comm.Gather(feature, features, root=0)
 
         if rank == 0:
             print('[', rank, ']', 'Feature :', features)
