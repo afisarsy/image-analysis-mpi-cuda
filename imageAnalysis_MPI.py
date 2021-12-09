@@ -136,7 +136,8 @@ def main():
                 exec_time = (timeit.default_timer() - start) * 1000
                 result = [file_paths, file_sizes, total_file_size, exec_time, predictions, conclusions]
                 results.append(result)
-                print('%12i' % total_file_size, 'Bytes', '%15s' % '{0:.3f}'.format(exec_time), 'ms', file_paths)
+                print('[', rank, ']', '%12i' % total_file_size, 'Bytes', '%15s' % '{0:.3f}'.format(exec_time), 'ms', file_paths)
+                print()
                 
                 x_test += x_batch
                 y_test += y_batch
