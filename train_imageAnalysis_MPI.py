@@ -74,11 +74,30 @@ def main():
         
         json_img = comm.scatter(imgs_crop, root=0)
         img_crop = np.array(json.loads(json_img), dtype='uint8')
-        print('[', rank, ']', 'image :', img_crop)
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm)
+        print('[', rank, ']', 'Feature :', feature)
 
-        print('[', rank, ']', 'Feature :', features)
+        features = None
+        if rank == 0:
+            features = np.empty([size, 9])
+        comm.gather(feature, features, root=0)
+
+        if rank == 0:
+            print('[', rank, ']', 'Feature :', features)
+            contrast = max([feature[0] for feature in features])
+            energy = min([feature[1] for feature in features])
+            homogeneity = min([feature[2] for feature in features])
+            mean = max([feature[3] for feature in features])
+            std = max([feature[4] for feature in features])
+            var = max([feature[5] for feature in features])
+            entropy = max([feature[6] for feature in features])
+            rms = max([feature[7] for feature in features])
+            smoothness = max([feature[8] for feature in features])
+            combined_feature = [contrast, energy, homogeneity, mean, std, var, entropy, rms, smoothness]
+            print('[', rank, ']', 'Combined feature :', combined_feature)
+
+        comm.Barrier()
 
         sys.exit(0)
 
