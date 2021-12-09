@@ -68,7 +68,7 @@ def main():
                 print('[', rank, ']', 'Combined feature :', combined_feature)
 
                 x_train.append(combined_feature)
-                y_train.append(img_data[i][1])
+                y_train.append(i)
     
     if rank == 0:
         model = LogisticRegression()
