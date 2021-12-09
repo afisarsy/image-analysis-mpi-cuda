@@ -79,7 +79,7 @@ def main():
         cropBox = imgProcessing.getCropBox(w, h, size, index=rank)
         img_crop = img[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]]
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
-        feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
+        feature = LeafDisease.extractFeature(img_hsv_masked, glcm)
         np_feature = np.array(feature, dtype='float')
 
         gathered_features = None
