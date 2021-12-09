@@ -66,7 +66,7 @@ def main():
 
         start = timeit.default_timer()
         feature_file = open(sample_feature_file, 'w')
-        
+
     for i, test_data in enumerate(test_datas):
         if rank == 0:
             debug = (i == debug_index[0] or i == debug_index[1])
@@ -83,9 +83,9 @@ def main():
         np_feature = np.array(feature, dtype='float')
 
         gathered_features = None
-            if rank == 0:
-                gathered_features = np.empty([size, 9], dtype='float')
-            comm.Gather(np_feature, gathered_features, root=0)
+        if rank == 0:
+            gathered_features = np.empty([size, 9], dtype='float')
+        comm.Gather(np_feature, gathered_features, root=0)
 
         if rank == 0:
             contrast = max([feature[0] for feature in gathered_features])
