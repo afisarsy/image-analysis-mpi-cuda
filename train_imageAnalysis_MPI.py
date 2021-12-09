@@ -37,6 +37,8 @@ def main():
 
         classes = [class_name for class_name in os.listdir(dataset_dir) if os.path.isdir(os.path.join(dataset_dir, class_name).replace("\\","/"))]
         img_data = []
+        x_train = []
+        y_train = []
         
         for i, class_name in enumerate(classes):
             img_files = os.listdir(os.path.join(dataset_dir, class_name).replace("\\","/"))
@@ -53,8 +55,6 @@ def main():
     upper_blue = comm.bcast(upper_blue, root=0)
     total_img = comm.bcast(total_img, root=0)
     
-    x_train = []
-    y_train = []
     for i in range(total_img):
         if rank == 0:
             print('[', rank, ']', '({}/{})'.format(i+1, total_img), 'File :', img_data[i][0])
