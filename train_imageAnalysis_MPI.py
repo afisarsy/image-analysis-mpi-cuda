@@ -67,12 +67,13 @@ def main():
             cropBoxes = imgProcessing.getCropBox(w, h, size)
             imgs_crop = []
             for cropBox in cropBoxes:
-                imgs_crop.append(json.dumps(img[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]]))
+                cropped_image = img[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]]
+                imgs_crop.append(json.dumps(cropped_image.tolist()))
         else:
             imgs_crop = None
         
         json_img = comm.scatter(imgs_crop, root=0)
-        img_crop = json.loads(json_img)
+        img_crop = np.array(json.loads(json_img))
         print('[', rank, ']', 'image :', img_crop)
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
