@@ -77,11 +77,12 @@ def main():
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
         feature = LeafDisease.extractFeature(img_hsv_masked, glcm)
         print('[', rank, ']', 'Feature :', feature)
+        np_feature = np.array(feature, dtype='float')
 
         features = None
         if rank == 0:
-            features = np.empty([size, 9])
-        comm.Gather(feature, features, root=0)
+            features = np.empty([size, 9], dtype='float')
+        comm.Gather(np_feature, features, root=0)
 
         if rank == 0:
             print('[', rank, ']', 'Feature :', features)
