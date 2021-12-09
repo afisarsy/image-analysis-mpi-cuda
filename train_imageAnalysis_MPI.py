@@ -35,10 +35,11 @@ def main():
 
     for i, class_name in enumerate(classes):
         img_files = os.listdir(os.path.join(dataset_dir, class_name).replace("\\","/"))
-        for img_name in img_files:
+        for j, img_name in enumerate(img_files):
             img_path = os.path.join(dataset_dir, class_name, img_name).replace("\\","/")
-            print()
-            print('[', rank, ']', '({}/{})'.format(i+1, len(img_files)), 'File :', img_path)
+            if rank == 0:
+                print()
+                print('[', rank, ']', '({}/{})'.format(j+1, len(img_files)), 'File :', img_path)
             img = LeafDisease.loadImage(img_path)
             w, h, c = img.shape
             cropBox = imgProcessing.getCropBox(w, h, size, index=rank)
