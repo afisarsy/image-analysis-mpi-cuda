@@ -66,20 +66,21 @@ def main():
 
         start = timeit.default_timer()
         feature_file = open(sample_feature_file, 'w')
-
+    
+    debug = False
     for i, test_data in enumerate(test_datas):
         if rank == 0:
             debug = (i == debug_index[0] or i == debug_index[1])
             if debug:
                 print()
-                print('[', rank, ']', '({}/{})'.format(i+1, len(test_datas)), 'File :', test_data[0])
+                print('[', rank, ']', 'File :', test_data[0])
 
         img = LeafDisease.loadImage(test_data[0])
         w, h, c = img.shape
         cropBox = imgProcessing.getCropBox(w, h, size, index=rank)
         img_crop = img[cropBox[0]:cropBox[2], cropBox[1]:cropBox[3]]
         img_hsv_masked, glcm = LeafDisease.preprocessing(img_crop, lower_blue, upper_blue)
-        feature = LeafDisease.extractFeature(img_hsv_masked, glcm)
+        feature = LeafDisease.extractFeature(img_hsv_masked, glcm, debug=debug)
         np_feature = np.array(feature, dtype='float')
 
         gathered_features = None
@@ -135,7 +136,7 @@ def main():
                 exec_time = (timeit.default_timer() - start) * 1000
                 result = [file_paths, file_sizes, total_file_size, exec_time, predictions, conclusions]
                 results.append(result)
-                print('[', rank, ']', '%12i' % total_file_size, 'Bytes', '%15s' % '{0:.3f}'.format(exec_time), 'ms', file_paths)
+                print('[', rank, ']', '({}/{})'.format(i+1, len(test_datas)), 'Size : %12i Bytes' % total_file_size, 'Time : %10s ms' % '{0:.3f}'.format(exec_time), 'File :', file_paths)
                 print()
                 
                 x_test += x_batch
