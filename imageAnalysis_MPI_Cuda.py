@@ -22,11 +22,11 @@ def main():
     dt_string = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
 
     '''Main Params'''
-    model = 'modelMPI.sav'
+    model = 'modelMPICuda.sav'
     datatest_dir = 'dataset/test'
-    output_file = 'imageAnalysisMPI_' + dt_string + '.csv'
-    confusion_matrix_file = 'cmMPI_' + dt_string + '.png'
-    sample_feature_file = 'sampleFeatureMPI.txt'
+    output_file = 'imageAnalysisMPICuda_' + dt_string + '.csv'
+    confusion_matrix_file = 'cmMPICuda_' + dt_string + '.png'
+    sample_feature_file = 'sampleFeatureMPICuda.txt'
     batch_size = 1
     lower_blue = np.array([14,32.64,22.185])
     upper_blue = np.array([34,255,232.815])
