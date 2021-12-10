@@ -77,16 +77,7 @@ def main():
 
         if rank == 0:
             print('[', rank, ']', 'Gathered features :', gathered_features)
-            contrast = max([feature[0] for feature in gathered_features])
-            energy = min([feature[1] for feature in gathered_features])
-            homogeneity = min([feature[2] for feature in gathered_features])
-            mean = max([feature[3] for feature in gathered_features])
-            std = max([feature[4] for feature in gathered_features])
-            var = max([feature[5] for feature in gathered_features])
-            entropy = max([feature[6] for feature in gathered_features])
-            rms = max([feature[7] for feature in gathered_features])
-            smoothness = max([feature[8] for feature in gathered_features])
-            combined_feature = [contrast, energy, homogeneity, mean, std, var, entropy, rms, smoothness]
+            combined_feature = LeafDisease.combineFeatures(gathered_features)
             print('[', rank, ']', 'Combined feature :', combined_feature)
 
             x_train.append(combined_feature)

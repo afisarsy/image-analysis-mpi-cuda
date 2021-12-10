@@ -94,16 +94,7 @@ def main():
         comm.Gather(np_feature, gathered_features, root=0)
 
         if rank == 0:
-            contrast = max([feature[0] for feature in gathered_features])
-            energy = min([feature[1] for feature in gathered_features])
-            homogeneity = min([feature[2] for feature in gathered_features])
-            mean = max([feature[3] for feature in gathered_features])
-            std = max([feature[4] for feature in gathered_features])
-            var = max([feature[5] for feature in gathered_features])
-            entropy = max([feature[6] for feature in gathered_features])
-            rms = max([feature[7] for feature in gathered_features])
-            smoothness = max([feature[8] for feature in gathered_features])
-            combined_feature = [contrast, energy, homogeneity, mean, std, var, entropy, rms, smoothness]
+            combined_feature = LeafDisease.combineFeatures(gathered_features)
 
             if debug:
                 feature_file.writelines('File\t\t\t: ' + test_data[0] + '\n')

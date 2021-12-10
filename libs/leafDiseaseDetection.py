@@ -83,6 +83,21 @@ class LeafDisease:
 
         return [contrast[0][0], energy[0][0], homogeneity[0][0], mean, std, var, e, rms, smoothness]
     
+    '''Combine Features from nodes (MPI mode)'''
+    @staticmethod
+    def combineFeatures(gathered_features):
+        contrast = max([feature[0] for feature in gathered_features])
+        energy = min([feature[1] for feature in gathered_features])
+        homogeneity = min([feature[2] for feature in gathered_features])
+        mean = max([feature[3] for feature in gathered_features])
+        std = max([feature[4] for feature in gathered_features])
+        var = max([feature[5] for feature in gathered_features])
+        entropy = max([feature[6] for feature in gathered_features])
+        rms = max([feature[7] for feature in gathered_features])
+        smoothness = max([feature[8] for feature in gathered_features])
+        
+        return [contrast, energy, homogeneity, mean, std, var, entropy, rms, smoothness]
+    
     '''Scale Data'''
     @staticmethod
     def scaleData(x, scaler = None):
