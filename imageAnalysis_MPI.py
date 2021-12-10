@@ -98,7 +98,6 @@ def main():
             rms = max([feature[7] for feature in gathered_features])
             smoothness = max([feature[8] for feature in gathered_features])
             combined_feature = [contrast, energy, homogeneity, mean, std, var, entropy, rms, smoothness]
-            print('[', rank, ']', 'Combined feature :', combined_feature)
 
             if debug:
                 feature_file.writelines('File\t\t\t: ' + test_data[0] + '\n')
